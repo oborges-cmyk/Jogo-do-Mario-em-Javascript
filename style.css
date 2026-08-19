@@ -25,7 +25,7 @@ head {
     justify-content: space-between;
     align-items: center;
     background: #000;
-    color: #FFF;
+    color: #fff;
     padding: 6px 16px;
     font-size: 14px;
     font-weight: bold;
@@ -34,38 +34,61 @@ head {
 }
 
 #gameCanvas {
-    width: 100%;
-    height: 100%;
-    background-color: #000; /* Fundo preto para o canvas do jogo */
-    display: block; /* Garante que o canvas seja exibido como um bloco */
+    display: block;
+    background: #5c94fc;
+    width: 800px;
+    height: 464px;
 }
 
 #overlay {
-
+position: absolute;
+top: 26px;
+left: 0;
+width: 100%;
+height: calc(100%-36px);
+background: rgba(0,0,0,0.75);
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+color: #fff;
+text-align: center;
+z-index: 10;
 }
 
-#overlay-hidden {
+#overlay.hidden {
 display: none;
 }
 
 #overlay-title {
 font-size: 48px;
-color: #;
-text-shadow: ;
-margin-bottom: ;
+color: #e52521;
+text-shadow: 3px 3px #000;
+margin-bottom: 20px;
+letter-spacing: 4px;
 }
 
 #overlay-msg {
-font-size: 48px;
+font-size: 16px;
 color: #FFF;
-margin-bottom: auto;
-line-height: ;
+margin-bottom: 20px;
+line-height: 2;
 }
 
 #overlay-btn {
-    
+    background: #e52521;
+    color: #fff;
+    border: none;
+    padding: 12px 36px;
+    font-size: 18px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: bold;
+    cursor: pointer;
+    letter-spacing: 2px;
+    border-radius: 4px;
+    transition: background 0.15s;
 }
 
-#overlay-hover {
-background: red;
+#overlay-btn:hover {
+background: #ff4a46;
 }
