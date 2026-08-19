@@ -32,3 +32,40 @@ head {
     letter-spacing: 1px;
     height: 36px;
 }
+
+#gameCanvas {
+    width: 100%;
+    height: 100%;
+    background-color: #000; /* Fundo preto para o canvas do jogo */
+    display: block; /* Garante que o canvas seja exibido como um bloco */
+}
+
+#overlay {
+
+}
+
+#overlay-hidden {
+display: none;
+}
+
+#overlay-title {
+font-size: 48px;
+color: #;
+text-shadow: ;
+margin-bottom: ;
+}
+
+#overlay-msg {
+font-size: 48px;
+color: #FFF;
+margin-bottom: auto;
+line-height: ;
+}
+
+#overlay-btn {
+    
+}
+
+#overlay-hover {
+background: red;
+}
