@@ -62,3 +62,4 @@ function gameLoop() {
 
 // Iniciar o jogo
 gameLoop();
+

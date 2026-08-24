@@ -92,3 +92,12 @@ line-height: 2;
 #overlay-btn:hover {
 background: #ff4a46;
 }
+
+.pipe {
+    position: absolute;
+    bottom: 0;
+    width: 80px;
+    right: 0;
+}
+
+@keyframes
