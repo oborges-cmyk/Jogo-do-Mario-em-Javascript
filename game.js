@@ -296,3 +296,31 @@ function spawnParticles(x, y, color, n = 6) {
     }
     return false;
   }
+
+  // ── Input ─────────────────────────────────────────────────────────────────────
+  const keys = {};
+  const JUMP_KEYS = ['Space','ArrowUp','KeyW'];
+  const DOUBLE_TAP_MS = 400;
+  let lastJumpTapTime = 0;
+  let pendingSuperJump = false;
+  let superFlash = 0; // frames remaining for on-screen "SUPER!" indicator
+  
+  window.addEventListener('keydown', e => {
+    if (JUMP_KEYS.includes(e.code) && !e.repeat) {
+      const now = performance.now();
+      // Double-tap detection
+      if (now - lastJumpTapTime < DOUBLE_TAP_MS) {
+        pendingSuperJump = true;
+      }
+      // Shift held + jump also triggers super jump (fallback trigger)
+      if (keys['ShiftLeft'] || keys['ShiftRight']) {
+        pendingSuperJump = true;
+      }
+      lastJumpTapTime = now;
+    }
+    keys[e.code] = true;
+    if (['Space','ArrowUp','ArrowLeft','ArrowRight','ArrowDown',
+         'KeyW','KeyA','KeyD','KeyS'].includes(e.code)) {
+      e.preventDefault();
+    }
+  });
