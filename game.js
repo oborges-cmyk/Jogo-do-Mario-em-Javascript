@@ -324,3 +324,19 @@ function spawnParticles(x, y, color, n = 6) {
       e.preventDefault();
     }
   });
+    
+  window.addEventListener('keyup', e => { keys[e.code] = false; });
+  function isLeft() { return keys['ArrowLeft'] || keys['KeyA']; }
+  function isRight() { return keys['ArrowRight'] || keys['KeyD']; }
+  function isJump() { return keys['Space'] || keys['ArrowUp'] || keys['KeyW']; }
+
+// ___Physics / collision___
+function isOverlappingSolid(x, y) {
+  for (let p of pipes) {
+    if (rectOverlap(x, y, mario.w, mario.h, p.x, p.y, p.w, p.h)) return true;
+  }
+  for (let p of platforms) {
+    if (rectOverlap(x, y, mario.w, mario.h, p.x, p.y, p.w, p.h)) return true;
+  }
+  return false;
+}
