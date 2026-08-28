@@ -340,3 +340,18 @@ function isOverlappingSolid(x, y) {
   }
   return false;
 }
+
+function updateMario() {
+if(mario.dead) {
+mario.dendTimer++ }
+
+mario.vy += GRAVITY;
+mario.v += mario.vy;
+
+if(mario.deadTimer < 20) {
+| mario.vy = -8
+}
+if(mario.y > canvas.height + 100) {
+lives--;
+if(lives <= 0) }
+//corrigir
