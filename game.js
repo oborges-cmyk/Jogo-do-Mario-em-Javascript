@@ -342,30 +342,79 @@ function isOverlappingSolid(x, y) {
 }
 
 function updateMario() {
-    if (mario.dead) {
-        mario.deadTimer++;
+  if (mario.dead) {
 
-        // Faz o Mario pular levemente ao morrer antes de cair da tela
-        if (mario.deadTimer === 1) {
-            mario.vy = -8;
+  mario.deadTimer++
+  if (mario.deadTimer < 20) {
+    mario.vy = -8
+  }
+  mario.vy +=GRAVITY;
+  mario.v += mario.vy;
+  if(mario.y > canvas.height + 100) {
+    lives--;
+    if(lives <=0)
+      }
+    }
+  }
+
+if (mario.invincible > 0) mario.invincible--;
+
+const speed = 3.5;
+if(isLeft()) {
+  mario.vx = speed;
+  mario.dir=1;
+  mario.walking=true;
+} else{
+mario.vx = 0;
+mario.walking =false;
+}
+mario.x += mario.vx;
+
+// World bounds
+if (mario.x < 0) mario.x = 0;
+if (mario.x + mario.w > WORLD_W) mario.x =
+WORLD_W - mario.w;
+
+// Gravity
+mario.vy += GRAVITY;
+mario.y += mario.vy;
+mario.onGround = false;
+
+// Ceiling clamp so Mario can never leave the top of the screen
+if (mario.y < 0) {
+    mario.y = 0;
+    if (mario.vy < 0) mario.vy = 0;
+}
+
+// Ground collision
+const mx1 = mario.x, mx2 = mario.x + mario.w;
+const groundTileLeft = Math.floor(mx1 / TILE);
+const groundTileRight = Math.floor((mx2 - 1) / TILE);
+
+const feetY = mario.y + mario.h;
+if (mario.vy >= 0) {
+    // check if any tile under feet is ground (not a gap)
+    let onGround = false;
+    for (let tx = groundTileLeft; tx <= groundTileRight; tx++) {
+        if (!isGap(tx * TILE)) {
+            onGround = true;
+            break;
         }
     }
-
-    // Aplica a gravidade e atualiza a posição vertical
-    mario.vy += GRAVITY;
-    mario.y += mario.vy;
-
-    // Verifica se o Mario caiu totalmente para fora da tela
-    if (mario.y > canvas.height + 100) {
-        lives--;
-        if (lives <= 0) {
-            // Código de Game Over aqui (ex: gameState = 'GAMEOVER')
-        } else {
-            // Código para reiniciar a fase/posição do Mario aqui
-        }
+    if (onGround && feetY >= GROUND_Y && mario.y < GROUND_Y) {
+        mario.y = GROUND_Y - mario.h;
+        mario.vy = 0;
     }
 }
 
-//Ver no grupo Whats
-//Mario ganha ↓
-//Talvez outro pedaço
+//alguma coisa?
+if (!isGap(tx * TILE)) {
+    onGround = true;
+    break;
+}
+
+if (!onGround && feetY >= GROUND_Y && mario.y < GROUND_Y) {
+    mario.y = GROUND_Y - mario.height; // Parte borrada (provavelmente a altura)
+    mario.vy = 0;
+    mario.onGround = true;
+}
