@@ -342,15 +342,30 @@ function isOverlappingSolid(x, y) {
 }
 
 function updateMario() {
-if(mario.dead) {
-mario.dendTimer++ }
+    if (mario.dead) {
+        mario.deadTimer++;
 
-mario.vy += GRAVITY;
-mario.v += mario.vy;
+        // Faz o Mario pular levemente ao morrer antes de cair da tela
+        if (mario.deadTimer === 1) {
+            mario.vy = -8;
+        }
+    }
 
-if(mario.deadTimer < 20) {
-| mario.vy = -8
+    // Aplica a gravidade e atualiza a posição vertical
+    mario.vy += GRAVITY;
+    mario.y += mario.vy;
+
+    // Verifica se o Mario caiu totalmente para fora da tela
+    if (mario.y > canvas.height + 100) {
+        lives--;
+        if (lives <= 0) {
+            // Código de Game Over aqui (ex: gameState = 'GAMEOVER')
+        } else {
+            // Código para reiniciar a fase/posição do Mario aqui
+        }
+    }
 }
-if(mario.y > canvas.height + 100) {
-lives--;
-if(lives <= 0) }
+
+//Ver no grupo Whats
+//Mario ganha ↓
+//Talvez outro pedaço
