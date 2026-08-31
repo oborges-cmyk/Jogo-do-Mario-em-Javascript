@@ -354,4 +354,3 @@ if(mario.deadTimer < 20) {
 if(mario.y > canvas.height + 100) {
 lives--;
 if(lives <= 0) }
-//corrigir
