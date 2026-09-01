@@ -407,14 +407,49 @@ if (mario.vy >= 0) {
     }
 }
 
-//alguma coisa?
+for (let tx = groundTileLeft; tx <= groundTileRight; tx++) {
 if (!isGap(tx * TILE)) {
     onGround = true;
     break;
 }
 
 if (!onGround && feetY >= GROUND_Y && mario.y < GROUND_Y) {
-    mario.y = GROUND_Y - mario.height; // Parte borrada (provavelmente a altura)
+    mario.y = GROUND_Y - mario.h;
     mario.vy = 0;
     mario.onGround = true;
+}
+}
+
+//Fall into gap → die
+if (mario.y > canvas.height + 50 && !mario.dead) {
+    killMario();
+    return;
+}
+
+//Platform collisions
+for (let p of platforms) {
+if (!rectOverlap(mario.x, mario.y, mario.w, mario.h, p.x, p.y, p.w, p.h)) continue;
+
+const overlapLeft = (mario.x + mario.w) - p.x; 
+const overlapRight = (p.x + p.w) - mario.x;
+const overlapTop = (mario.y + mario.h) - p.y;
+const overlapBottom = (p.y + p.h) - mario.y;
+
+const minH = Math.min(overlapLeft, overlapRight);
+const minV = Math.min(overlapTop, overlapBottom);
+
+if (minH < minV) {
+    if (overlapLeft < overlapRight) {
+        mario.y = p.y - mario.h;
+        mario.vy = 0;
+        mario.onGround = true;
+    } else {
+        mario.y = p.y + p.h;
+        mario.vy = Math.abs(mario.vy) * 0.3;
+        hitBlock(p);
+    }
+}
+
+if (overlapLeft < overlapRight) {
+    mario.x = p.x - mario.w;
 }
