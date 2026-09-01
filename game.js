@@ -452,4 +452,12 @@ if (minH < minV) {
 
 if (overlapLeft < overlapRight) {
     mario.x = p.x - mario.w;
+} else { 
+      mario.x = p.x + p.w;
 }
+
+mario.vx = 0;
+}
+
+//Pipe collisions (solid)
+for (let pipe of pipes) {
