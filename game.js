@@ -1,16 +1,17 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// --- Audio -----------------------
-const bgMusic = new Audio("background_music.mp3");
+canvas.width = 800;
+canvas.height = 464;
 
+// --- Configuração de Áudio ---
+const bgMusic = new Audio("music.mp3");
 bgMusic.loop = true;
-bgMusic.volume = 0.4; 
-bgMusic.preload ="auto"; 
+bgMusic.volume = 0.4;
+bgMusic.preload = "auto";
 
-const stompSound = new Audio("stomp_sound.mp3");
-
-stompSound.volume = 0.7;  // Set volume to 50%
+const stompSound = new Audio("Audio1.mp3");
+stompSound.volume = 0.7;
 
 canvas.width = 800;
 canvas.height = 464;  
@@ -142,19 +143,17 @@ const pipeDefs = [
   // Flag at end
   const FLAG_X = 195;
 
-//______________________Game State___________________________________
+//__________Game State______________________________
 
 let state = "Title"; //title | playing | dead | win | gameover
-let score =  0;
+let score = 0;
 let lives = 3;
 let coinCount = 0;
 let timeLeft = 400;
 let timeInterval = null;
 let camX = 0;
 
-let mario, platforms, pipes, enemies, coins, particles;
-
-//_____________________________________________________________________
+let mario, plataforms, pipes, enemies, coins, particles;
 
 // ── Particle system ───────────────────────────────────────────────────────────
 function spawnParticles(x, y, color, n = 6) {
@@ -296,41 +295,42 @@ function spawnParticles(x, y, color, n = 6) {
     }
     return false;
   }
-
-  // ── Input ─────────────────────────────────────────────────────────────────────
-  const keys = {};
-  const JUMP_KEYS = ['Space','ArrowUp','KeyW'];
-  const DOUBLE_TAP_MS = 400;
-  let lastJumpTapTime = 0;
-  let pendingSuperJump = false;
-  let superFlash = 0; // frames remaining for on-screen "SUPER!" indicator
   
-  window.addEventListener('keydown', e => {
-    if (JUMP_KEYS.includes(e.code) && !e.repeat) {
-      const now = performance.now();
-      // Double-tap detection
-      if (now - lastJumpTapTime < DOUBLE_TAP_MS) {
-        pendingSuperJump = true;
-      }
-      // Shift held + jump also triggers super jump (fallback trigger)
-      if (keys['ShiftLeft'] || keys['ShiftRight']) {
-        pendingSuperJump = true;
-      }
-      lastJumpTapTime = now;
-    }
-    keys[e.code] = true;
-    if (['Space','ArrowUp','ArrowLeft','ArrowRight','ArrowDown',
-         'KeyW','KeyA','KeyD','KeyS'].includes(e.code)) {
-      e.preventDefault();
-    }
-  });
-    
-  window.addEventListener('keyup', e => { keys[e.code] = false; });
-  function isLeft() { return keys['ArrowLeft'] || keys['KeyA']; }
-  function isRight() { return keys['ArrowRight'] || keys['KeyD']; }
-  function isJump() { return keys['Space'] || keys['ArrowUp'] || keys['KeyW']; }
+  // ── Input ─────────────────────────────────────────────────────────────────────
+const keys = {};
+const JUMP_KEYS = ['Space','ArrowUp','KeyW'];
+const DOUBLE_TAP_MS = 400;
+let lastJumpTapTime = 0;
+let pendingSuperJump = false;
+let superFlash = 0; // frames remaining for on-screen "SUPER!" indicator
 
-// ___Physics / collision___
+window.addEventListener('keydown', e => {
+  if (JUMP_KEYS.includes(e.code) && !e.repeat) {
+    const now = performance.now();
+    // Double-tap detection
+    if (now - lastJumpTapTime < DOUBLE_TAP_MS) {
+      pendingSuperJump = true;
+    }
+    // Shift held + jump also triggers super jump (fallback trigger)
+    if (keys['ShiftLeft'] || keys['ShiftRight']) {
+      pendingSuperJump = true;
+    }
+    lastJumpTapTime = now;
+  }
+  keys[e.code] = true;
+  if (['Space','ArrowUp','ArrowLeft','ArrowRight','ArrowDown',
+       'KeyW','KeyA','KeyD','KeyS'].includes(e.code)) {
+    e.preventDefault();
+  }
+});
+
+window.addEventListener('keyup', e => { keys[e.code] = false; });
+
+function isLeft() { return keys['ArrowLeft'] || keys['KeyA']; }
+function isRight() { return keys['ArrowRight'] || keys['KeyD']; }
+function isJump() { return keys['Space'] || keys['ArrowUp'] || keys['KeyW']; }
+
+// ______Physics / collision______
 function isOverlappingSolid(x, y) {
   for (let p of pipes) {
     if (rectOverlap(x, y, mario.w, mario.h, p.x, p.y, p.w, p.h)) return true;
@@ -342,38 +342,43 @@ function isOverlappingSolid(x, y) {
 }
 
 function updateMario() {
-  if (mario.dead) {
-
-  mario.deadTimer++
-  if (mario.deadTimer < 20) {
-    mario.vy = -8
-  }
-  mario.vy +=GRAVITY;
-  mario.v += mario.vy;
-  if(mario.y > canvas.height + 100) {
-    lives--;
-    if(lives <=0)
-      }
+  if(mario.dead) {
+     
+    mario.deadTimer++
+    if(mario.deadTimer < 20) {
+      mario.vy = -8
+    }
+    mario.vy += GRAVITY;
+    mario.v  += mario.vy;
+    if(mario.y > canvas.height + 100) {
+      lives--;
+    if(lives <= 0)
+        endGame('gameover')
+    } else {
+      livesEl.textContent = lives;
+      initGame();
+      state = playing;
+      startTimer();
     }
   }
+}
 
 if (mario.invincible > 0) mario.invincible--;
 
-const speed = 3.5;
-if(isLeft()) {
-  mario.vx = speed;
-  mario.dir=1;
-  mario.walking=true;
-} else{
-mario.vx = 0;
-mario.walking =false;
+const speed = 3.9;
+if (isLeft()) {
+    mario.vx = speed;
+    mario.dir = -1;
+    mario.walking = true;
+} else if (isRight()) {
+    mario.vx = speed;
+    mario.dir = 1;
+    mario.walking = true;
+} else {
+    mario.vx = 0;
+    mario.walking = false;
 }
 mario.x += mario.vx;
-
-// World bounds
-if (mario.x < 0) mario.x = 0;
-if (mario.x + mario.w > WORLD_W) mario.x =
-WORLD_W - mario.w;
 
 // Gravity
 mario.vy += GRAVITY;
@@ -382,8 +387,8 @@ mario.onGround = false;
 
 // Ceiling clamp so Mario can never leave the top of the screen
 if (mario.y < 0) {
-    mario.y = 0;
-    if (mario.vy < 0) mario.vy = 0;
+  mario.y = 0;
+  if (mario.vy < 0) mario.vy = 0;
 }
 
 // Ground collision
@@ -393,7 +398,7 @@ const groundTileRight = Math.floor((mx2 - 1) / TILE);
 
 const feetY = mario.y + mario.h;
 if (mario.vy >= 0) {
-    // check if any tile under feet is ground (not a gap)
+    // Check if any tile under feet is ground (not a gap)
     let onGround = false;
     for (let tx = groundTileLeft; tx <= groundTileRight; tx++) {
         if (!isGap(tx * TILE)) {
@@ -404,60 +409,93 @@ if (mario.vy >= 0) {
     if (onGround && feetY >= GROUND_Y && mario.y < GROUND_Y) {
         mario.y = GROUND_Y - mario.h;
         mario.vy = 0;
-    }
-}
-
-for (let tx = groundTileLeft; tx <= groundTileRight; tx++) {
-if (!isGap(tx * TILE)) {
-    onGround = true;
-    break;
-}
-
-if (!onGround && feetY >= GROUND_Y && mario.y < GROUND_Y) {
-    mario.y = GROUND_Y - mario.h;
-    mario.vy = 0;
-    mario.onGround = true;
-}
-}
-
-//Fall into gap → die
-if (mario.y > canvas.height + 50 && !mario.dead) {
-    killMario();
-    return;
-}
-
-//Platform collisions
-for (let p of platforms) {
-if (!rectOverlap(mario.x, mario.y, mario.w, mario.h, p.x, p.y, p.w, p.h)) continue;
-
-const overlapLeft = (mario.x + mario.w) - p.x; 
-const overlapRight = (p.x + p.w) - mario.x;
-const overlapTop = (mario.y + mario.h) - p.y;
-const overlapBottom = (p.y + p.h) - mario.y;
-
-const minH = Math.min(overlapLeft, overlapRight);
-const minV = Math.min(overlapTop, overlapBottom);
-
-if (minH < minV) {
-    if (overlapLeft < overlapRight) {
-        mario.y = p.y - mario.h;
-        mario.vy = 0;
         mario.onGround = true;
-    } else {
-        mario.y = p.y + p.h;
-        mario.vy = Math.abs(mario.vy) * 0.3;
-        hitBlock(p);
     }
 }
 
-if (overlapLeft < overlapRight) {
-    mario.x = p.x - mario.w;
-} else { 
-      mario.x = p.x + p.w;
+
+// Fall into gap - die
+if (mario.y > canvas.height + 50 && !mario.dead) {
+killMario();
+return;
 }
 
-mario.vx = 0;
-}
+// Plataform collisions
+
+for (let p of plataforms) {
+  if (!rectOverlap(mario.x, mario.y, mario.w, mario.h, p.x, p.y, p.w, p.h)) continue;
+
+  const overlapLeft = (mario.x + mario.w) - p.x;
+  const overlapRight = (p.x + p.w) - mario.x;
+  const overlapTop = (mario.y + mario.h) - p.y;
+  const overlapBottom = (p.y + p.h) - mario.y;
+
+  const minH = Math.min(overlapLeft, overlapRight);
+  const minV = Math.min(overlapTop, overlapBottom);
+
+  if (minH > minV) {
+    if (overlapTop < overlapBottom) {
+      mario.y = p.y - mario.h;
+      mario.vy = 0;
+      mario.onGround = true;
+    } else {
+      mario.y = p.y + p.h;
+      mario.vy = Math.abs(mario.vy) * 0.3;
+      hitBlock(p);
+    }
+  } if (overlapLeft < overlapRight) {
+    mario.x = p.x - mario.w;
+  } else {
+    mario.x = p.x + p.w;
+  }
+    mario.vx = 0;
+  }
 
 //Pipe collisions (solid)
-for (let pipe of pipes) {
+for (let p of pipes) {
+  if (!rectOverlap(mario.x, mario.y, mario.w, mario.h, p.x, p.y, p.w, p.h)) continue;
+
+  const overlapLeft = (mario.x + mario.w) - p.x;
+  const overlapRight = (p.x + p.w) - mario.x;
+  const overlapTop = (mario.y + mario.h) - p.y;
+  const overlapBottom = (p.y + p.h) - mario.y;
+
+  const minH = Math.min(overlapLeft, overlapRight);
+  const minV = Math.min(overlapTop, overlapBottom);
+
+  if (minH > minV) {
+    if (overlapTop < overlapBottom) {
+      mario.y = p.y - mario.h;
+      mario.vy = 0;
+      mario.onGround = true;
+    } else {
+      mario.y = p.y + p.h;
+      mario.vy = Math.abs(mario.vy) * 0.3;
+      hitBlock(p);
+    }
+  } if (overlapLeft < overlapRight) {
+    mario.x = p.x - mario.w;
+  } else {
+    mario.x = p.x + p.w;
+  }
+    mario.vx = 0;
+  }
+
+// Super Jump (double tap jump or Shift + jump): escopes wedges
+if (pendingSuperJump && mario.onGround) {
+  let safety = 0; // safety counter to avoid infinite loop
+  while (safety++ < 0 && isOverlappingSolid(mario.x, mario.y)) {
+    mario.y -= 2;
+}
+
+mario.vy = -12;
+mario.onGround = false;
+pendingSuperJump = false;
+superFlash = 45;
+spawnParticles(mario.x + mario.w/mario.y + mario.h, '#fff', 16);
+spawnParticles(mario.x + mario.w/ 2, mario.y + mario.h, C.qShine, 10); 
+} else if (isJump() && mario.onGround) {
+  //Normal jump
+  mario.vy = -11;
+  mario.onGround = false;
+}
