@@ -481,7 +481,7 @@ for (let p of pipes) {
     mario.vx = 0;
   }
 
-// Super Jump (double tap jump or Shift + jump): escopes wedges
+// Super Jump (double tap jump or Shift + jump): escapes wedges
 if (pendingSuperJump && mario.onGround) {
   let safety = 0; // safety counter to avoid infinite loop
   while (safety++ < 0 && isOverlappingSolid(mario.x, mario.y)) {
@@ -498,4 +498,62 @@ spawnParticles(mario.x + mario.w/ 2, mario.y + mario.h, C.qShine, 10);
   //Normal jump
   mario.vy = -11;
   mario.onGround = false;
+}
+
+// Coin collection
+
+for (let c of coins) {
+if (c.collected) continue;
+const dx = (mario.x + mario.w/2) - C.x;
+const dy = (mario.y + mario.h/2) - C.y;
+if (Math.abs(dx) < c.r && Math.abs(dy) <mario.h / 2 + c.r) {
+  c.collected  = true;
+  score += 200;
+  coinCount++;
+  coinsEl.textContent = coinCount;
+  spawnParticles(c.x, c.y, C.coin, 8);
+}
+}
+
+// Enemy collisions
+for (let e of enemies) {
+  if (e.dead) continue;
+  if (!rectOverlap(mario.x, mario.y, mario.w, mario.h, e.x, e.y, e.w, e.h)) continue;
+
+  const mBottom = mario.y + mario.h;
+  const eTop    = e.y;
+
+  // Stomp from above
+  if (mario.vy > 0 && mBottom - mario.vy <= eTop + 4) {
+
+    const stomp = new Audio("stomp.mp3");
+stomp.volume = 0.8;
+stomp.play();
+
+    e.dead = true;
+    e.squished = true;
+    e.squishTimer = 30;
+    mario.vy = -6;
+    addScore(100);
+    spawnParticles(e.x + e.w / 2, e.y, C.goomba.body);
+  } else if (mario.invincible === 0) {
+    killMario();
+    return;
+  }
+}
+
+// Flag / win
+const flagX = FLAG_X * TILE;
+if (mario.x + mario.w > flagX && mario.x < flagX+TILE * 2) {
+  endGame('win');
+}
+
+// Mario walking
+
+if (mario.walking && mario.onGround) {
+  mario.frameTimer++;
+  if (mario.frameTimer >    6) {
+    mario.frame = (mario.frame +1 ) % 3;
+    mario.frameTimer = 0;
+  } else if
 }
