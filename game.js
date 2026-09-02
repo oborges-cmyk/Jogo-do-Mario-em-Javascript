@@ -587,7 +587,7 @@ spawnParticles(p.x + p.w / 2, p.y, C.coin, p.coinVal * 3);
     // Break brick
     p.hit = true;
     spawnParticles(p.x + p.w / 2, p.y, C.brick, 8);
-    platforms.splice(platforms.indexOf(p), 1);
+    plataforms.splice(plataforms.indexOf(p), 1);
     addScore(50);
 }
 }
