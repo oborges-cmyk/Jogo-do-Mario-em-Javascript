@@ -5,12 +5,12 @@ canvas.width = 800;
 canvas.height = 464;
 
 // --- Configuração de Áudio ---
-const bgMusic = new Audio("music.mp3");
+const bgMusic = new Audio("background_music.mp3");
 bgMusic.loop = true;
 bgMusic.volume = 0.4;
 bgMusic.preload = "auto";
 
-const stompSound = new Audio("Audio1.mp3");
+const stompSound = new Audio("stompSound.mp3");
 stompSound.volume = 0.7;
 
 canvas.width = 800;
@@ -153,7 +153,7 @@ let timeLeft = 400;
 let timeInterval = null;
 let camX = 0;
 
-let mario, plataforms, pipes, enemies, coins, particles;
+let mario, platforms, pipes, enemies, coins, particles;
 
 // ── Particle system ───────────────────────────────────────────────────────────
 function spawnParticles(x, y, color, n = 6) {
@@ -203,7 +203,7 @@ function spawnParticles(x, y, color, n = 6) {
   
     scoreEl.textContent = '000000';
     coinsEl.textContent = '0';
-    timerEl.textContent = '400';
+    timeEl.textContent = '400';
     livesEl.textContent = lives;
   
     mario = {
@@ -420,9 +420,9 @@ killMario();
 return;
 }
 
-// Plataform collisions
+// Platform collisions
 
-for (let p of plataforms) {
+for (let p of platforms) {
   if (!rectOverlap(mario.x, mario.y, mario.w, mario.h, p.x, p.y, p.w, p.h)) continue;
 
   const overlapLeft = (mario.x + mario.w) - p.x;
@@ -552,7 +552,7 @@ if (mario.x + mario.w > flagX && mario.x < flagX+TILE * 2) {
 
 if (mario.walking && mario.onGround) {
   mario.frameTimer++;
-  if (mario.frameTimer >    6) {
+  if (mario.frameTimer > 6) {
     mario.frame = (mario.frame +1 ) % 3;
     mario.frameTimer = 0;
  }
@@ -587,7 +587,7 @@ spawnParticles(p.x + p.w / 2, p.y, C.coin, p.coinVal * 3);
     // Break brick
     p.hit = true;
     spawnParticles(p.x + p.w / 2, p.y, C.brick, 8);
-    plataforms.splice(plataforms.indexOf(p), 1);
+    platforms.splice(platforms.indexOf(p), 1);
     addScore(50);
 }
 }
