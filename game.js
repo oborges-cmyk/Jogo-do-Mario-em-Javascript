@@ -201,10 +201,10 @@ function spawnParticles(x, y, color, n = 6) {
     lastJumpTapTime  = 0;
     superFlash       = 0;
   
-    scoreEl.textContent = '000000';
-    coinsEl.textContent = '0';
-    timeEl.textContent = '400';
-    livesEl.textContent = lives;
+    scoreElement.textContent = '000000';
+    coinsElement.textContent = '0';
+    timeElement.textContent = '400';
+    livesElement.textContent = lives;
   
     mario = {
       x: 3 * TILE,
@@ -349,7 +349,7 @@ function updateMario() {
       mario.vy = -8
     }
     mario.vy += GRAVITY;
-    mario.v  += mario.vy;
+    mario.y  += mario.vy;
     if(mario.y > canvas.height + 100) {
       lives--;
     if(lives <= 0)
@@ -357,7 +357,7 @@ function updateMario() {
     } else {
       livesEl.textContent = lives;
       initGame();
-      state = playing;
+      state = "playing";
       startTimer();
     }
   }
@@ -484,7 +484,7 @@ for (let p of pipes) {
 // Super Jump (double tap jump or Shift + jump): escapes wedges
 if (pendingSuperJump && mario.onGround) {
   let safety = 0; // safety counter to avoid infinite loop
-  while (safety++ < 0 && isOverlappingSolid(mario.x, mario.y)) {
+  while (safety++ < 100 && isOverlappingSolid(mario.x, mario.y)) {
     mario.y -= 2;
 }
 
@@ -492,7 +492,7 @@ mario.vy = -12;
 mario.onGround = false;
 pendingSuperJump = false;
 superFlash = 45;
-spawnParticles(mario.x + mario.w/mario.y + mario.h, '#fff', 16);
+spawnParticles(mario.x + mario.w / 2, mario.y + mario.h, '#fff', 16);
 spawnParticles(mario.x + mario.w/ 2, mario.y + mario.h, C.qShine, 10); 
 } else if (isJump() && mario.onGround) {
   //Normal jump
@@ -504,8 +504,8 @@ spawnParticles(mario.x + mario.w/ 2, mario.y + mario.h, C.qShine, 10);
 
 for (let c of coins) {
 if (c.collected) continue;
-const dx = (mario.x + mario.w/2) - C.x;
-const dy = (mario.y + mario.h/2) - C.y;
+const dx = (mario.x + mario.w/2) - c.x;
+const dy = (mario.y + mario.h/2) - c.y;
 if (Math.abs(dx) < c.r && Math.abs(dy) <mario.h / 2 + c.r) {
   c.collected  = true;
   score += 200;
@@ -590,4 +590,55 @@ spawnParticles(p.x + p.w / 2, p.y, C.coin, p.coinVal * 3);
     platforms.splice(platforms.indexOf(p), 1);
     addScore(50);
 }
+}
+
+function killerMario () {
+  bgMusic.pause();
+  // Play death sound
+  const deathSound = new Audio("death.mp3");
+  deathSound.volume = 0.8;
+  deathSound.currentTime = 1;
+  deathSound.play();
+
+if (mario.dead || mario.invincible > 0) return; // skip further checks if dead or invincible
+
+mario.dead=true;
+mario.deadTimer=0;
+mario.vy = -12;
+stopTimer();
+
+setTimeout(() => {
+
+    // optional reset
+   bgMusic.currentTime = 0;
+   bgMusic.play();
+   }, 4000);
+}
+
+function addScore(n) {
+    score += n;
+    scoreElement.textContent = score.toString().padStart(6, '0'); 
+}
+
+//_________________Enemy update and draw functions__________________________________________
+function updateEnemies() {
+  for (let e of enemies) {
+    if (e.dead) {
+      if (e.squished) {
+        e.squishTimer--;
+        if (e.squishTimer <= 0) { e.dead = true; }
+        continue;
+       }
+       if (e.dead) continue;
+
+    // Move enemy
+    e.x += e.vx;
+
+// Ground check
+const eTileLeft = Math.floor(e.x / TILE);
+const eTileRight = Math.floor((e.x + e.w - 1) / TILE);
+const aheadTile = e.vx > 0 ? eTileRight + 1 : eTileLeft - 1;
+
+if (isGap(aheadTile * TILE) || e.x ,+0 || e.x + e.w > WORLD_W) {
+  e.vx = -e.vx; // reverse direction
 }
