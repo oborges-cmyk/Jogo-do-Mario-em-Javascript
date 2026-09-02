@@ -555,5 +555,39 @@ if (mario.walking && mario.onGround) {
   if (mario.frameTimer >    6) {
     mario.frame = (mario.frame +1 ) % 3;
     mario.frameTimer = 0;
-  } else if
+ }
+  } else if (!mario.walking) {
+    mario.frame = 0;
+  }
+
+// camera
+
+const targetCam = mario.x - CAM_DEADZONE;
+if (targetCam > camX) { camX = Math.min(targetCam, WORLD_W - canvas.width);
+if (camX < 0) camX = 0;
+}
+
+function hitBlock(p) {
+  if (p.hit) return; // already hit
+  if (p.type === 'question') {
+    p.hit = true;
+    p.bounce = 8;
+    //Spawn coin from block
+    coinCount += p.coinVal;
+
+    // Play coin sound
+const coinSound = new Audio("coin.mp3");
+coinSound.volume = 0.8;
+coinSound.play();
+
+addScore(p.coinVal * 200);
+coinsEl.textContent = coinCount;
+spawnParticles(p.x + p.w / 2, p.y, C.coin, p.coinVal * 3);
+} else if (p.type === 'brick') {
+    // Break brick
+    p.hit = true;
+    spawnParticles(p.x + p.w / 2, p.y, C.brick, 8);
+    platforms.splice(platforms.indexOf(p), 1);
+    addScore(50);
+}
 }
