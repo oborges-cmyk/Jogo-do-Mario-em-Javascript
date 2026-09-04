@@ -672,3 +672,15 @@ function startTimer() {
 function stopTimer() {
     if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
 }
+
+// _________________________________ End game _______________________________
+function endGame(result) {
+  state = result;
+  stopTimer();
+  if (result === 'win') {
+      bgMusic.pause();
+      const winSound = new Audio("win.mp3");
+  winSound.play();
+    addScore(timeLeft * 50);
+    showOverlay('You Win!', `Score: ${score}`, 'Play Again', () => {
+      
