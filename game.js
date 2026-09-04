@@ -5,12 +5,12 @@ canvas.width = 800;
 canvas.height = 464;
 
 // --- Configuração de Áudio ---
-const bgMusic = new Audio("background_music.mp3");
+const bgMusic = new Audio("music.mp3");
 bgMusic.loop = true;
 bgMusic.volume = 0.4;
 bgMusic.preload = "auto";
 
-const stompSound = new Audio("stompSound.mp3");
+const stompSound = new Audio("Audio1.mp3");
 stompSound.volume = 0.7;
 
 canvas.width = 800;
@@ -153,7 +153,7 @@ let timeLeft = 400;
 let timeInterval = null;
 let camX = 0;
 
-let mario, platforms, pipes, enemies, coins, particles;
+let mario, plataforms, pipes, enemies, coins, particles;
 
 // ── Particle system ───────────────────────────────────────────────────────────
 function spawnParticles(x, y, color, n = 6) {
@@ -201,10 +201,10 @@ function spawnParticles(x, y, color, n = 6) {
     lastJumpTapTime  = 0;
     superFlash       = 0;
   
-    scoreElement.textContent = '000000';
-    coinsElement.textContent = '0';
-    timeElement.textContent = '400';
-    livesElement.textContent = lives;
+    scoreEl.textContent = '000000';
+    coinsEl.textContent = '0';
+    timerEl.textContent = '400';
+    livesEl.textContent = lives;
   
     mario = {
       x: 3 * TILE,
@@ -349,7 +349,7 @@ function updateMario() {
       mario.vy = -8
     }
     mario.vy += GRAVITY;
-    mario.y  += mario.vy;
+    mario.v  += mario.vy;
     if(mario.y > canvas.height + 100) {
       lives--;
     if(lives <= 0)
@@ -357,7 +357,7 @@ function updateMario() {
     } else {
       livesEl.textContent = lives;
       initGame();
-      state = "playing";
+      state = playing;
       startTimer();
     }
   }
@@ -420,9 +420,9 @@ killMario();
 return;
 }
 
-// Platform collisions
+// Plataform collisions
 
-for (let p of platforms) {
+for (let p of plataforms) {
   if (!rectOverlap(mario.x, mario.y, mario.w, mario.h, p.x, p.y, p.w, p.h)) continue;
 
   const overlapLeft = (mario.x + mario.w) - p.x;
@@ -449,9 +449,8 @@ for (let p of platforms) {
     mario.x = p.x + p.w;
   }
     mario.vx = 0;
-  }
+}
 
-//Pipe collisions (solid)
 for (let p of pipes) {
   if (!rectOverlap(mario.x, mario.y, mario.w, mario.h, p.x, p.y, p.w, p.h)) continue;
 
@@ -479,40 +478,39 @@ for (let p of pipes) {
     mario.x = p.x + p.w;
   }
     mario.vx = 0;
-  }
-
-// Super Jump (double tap jump or Shift + jump): escapes wedges
-if (pendingSuperJump && mario.onGround) {
-  let safety = 0; // safety counter to avoid infinite loop
-  while (safety++ < 100 && isOverlappingSolid(mario.x, mario.y)) {
-    mario.y -= 2;
 }
 
+//Super Jump (double-top jump or Shift + jump): escapes wedges
+if (pendingSuperJump && mario.onGround) {
+  let safety = 0; // safety counter to avoid infinite loop
+  while (safety++ < 8 && isOverlappingSolid(mario.x, mario.y)){
+      mario.y -= 2;
+}
 mario.vy = -12;
 mario.onGround = false;
 pendingSuperJump = false;
 superFlash = 45;
 spawnParticles(mario.x + mario.w / 2, mario.y + mario.h, '#fff', 16);
-spawnParticles(mario.x + mario.w/ 2, mario.y + mario.h, C.qShine, 10); 
-} else if (isJump() && mario.onGround) {
-  //Normal jump
-  mario.vy = -11;
-  mario.onGround = false;
-}
+spawnParticles(mario.x + mario.w / 2, mario.y + mario.h, C.qShine, 10);
+  } else if (isJump() && mario.onGround) {
+    // Normal jump
+    mario.vy = -11;
+    mario.onGround = false;
+  }
 
-// Coin collection
+// Coin Collection
 
 for (let c of coins) {
-if (c.collected) continue;
-const dx = (mario.x + mario.w/2) - c.x;
-const dy = (mario.y + mario.h/2) - c.y;
-if (Math.abs(dx) < c.r && Math.abs(dy) <mario.h / 2 + c.r) {
-  c.collected  = true;
-  score += 200;
-  coinCount++;
-  coinsEl.textContent = coinCount;
-  spawnParticles(c.x, c.y, C.coin, 8);
-}
+  if (c.collected) continue;
+  const dx = (mario.x + mario.w / 2) - c.x;
+  const dy = (mario.y + mario.h / 2) - c.y;
+  if (Math.abs(dx) < mario.w / 2 + c.r && Math.abs(dy) < mario.h / 2 + c.r) {
+      c.collected = true;
+      score += 200;
+      coinCount++;
+      coinsEl.textContent = coinCount;
+      spawnParticles(c.x, c.y, C.coin, 8);
+  }
 }
 
 // Enemy collisions
@@ -526,7 +524,7 @@ for (let e of enemies) {
   // Stomp from above
   if (mario.vy > 0 && mBottom - mario.vy <= eTop + 4) {
 
-    const stomp = new Audio("stompSound.mp3");
+    const stomp = new Audio("stomp.mp3");
 stomp.volume = 0.8;
 stomp.play();
 
@@ -544,55 +542,55 @@ stomp.play();
 
 // Flag / win
 const flagX = FLAG_X * TILE;
-if (mario.x + mario.w > flagX && mario.x < flagX+TILE * 2) {
-  endGame('win');
+if (mario.x + mario.w > flagX && mario.x < flagX + TILE * 2) {
+    endGame('win');
 }
 
-// Mario walking
+// Walking Animation
 
 if (mario.walking && mario.onGround) {
   mario.frameTimer++;
   if (mario.frameTimer > 6) {
-    mario.frame = (mario.frame +1 ) % 3;
-    mario.frameTimer = 0;
- }
-  } else if (!mario.walking) {
-    mario.frame = 0;
+      mario.frame = (mario.frame + 1) % 3;
+      mario.frameTimer = 0;
   }
-
-// camera
-
-const targetCam = mario.x - CAM_DEADZONE;
-if (targetCam > camX) { camX = Math.min(targetCam, WORLD_W - canvas.width);
-if (camX < 0) camX = 0;
+} else if (!mario.walking) {
+  mario.frame = 0;
 }
 
-function hitBlock(p) {
-  if (p.hit) return; // already hit
-  if (p.type === 'question') {
-    p.hit = true;
-    p.bounce = 8;
-    //Spawn coin from block
-    coinCount += p.coinVal;
+// camera
+const targetCam = mario.x - CAM_DEADZONE;
+if (targetCam > camX) { camX = Math.min(targetCam, WORLD_W - canvas.width); }
+if (camX < 0) camX = 0;
 
-    // Play coin sound
+function hitBlock(p) {
+    if (p.hit) return; // already hit
+    if (p.type === 'question') {
+        p.hit = true;
+        p.bounce = 8;
+        //Spawn coin from block
+        coinCount += p.coinVal;
+    
+
+// Play coin sound
 const coinSound = new Audio("coin.mp3");
 coinSound.volume = 0.8;
 coinSound.play();
 
 addScore(p.coinVal * 200);
-coinsEl.textContent = coinCount;
+  coinEl.textContent = coinCount;
 spawnParticles(p.x + p.w / 2, p.y, C.coin, p.coinVal * 3);
 } else if (p.type === 'brick') {
-    // Break brick
-    p.hit = true;
-    spawnParticles(p.x + p.w / 2, p.y, C.brick, 8);
-    platforms.splice(platforms.indexOf(p), 1);
-    addScore(50);
-}
+// Break brick
+p.hit = true;
+spawnParticles(p.x + p.w / 2, p.y, C.brick, 8);
+platforms.splice(platforms.indexOf(p), 1);
+addScore(50);
+ }
 }
 
-function killerMario () {
+function killMario() {
+
   bgMusic.pause();
   // Play death sound
   const deathSound = new Audio("death.mp3");
@@ -600,45 +598,77 @@ function killerMario () {
   deathSound.currentTime = 1;
   deathSound.play();
 
-if (mario.dead || mario.invincible > 0) return; // skip further checks if dead or invincible
+  if (mario.dead || mario.invincible > 0) return;
 
-mario.dead=true;
-mario.deadTimer=0;
-mario.vy = -12;
-stopTimer();
+  mario.dead = true;
+  mario.deadTimer = 0;
+  mario.vy = -12;
+  stopTimer();
 
-setTimeout(() => {
+  // Nota: Na imagem está escrito "setTimeoutr", o correto é "setTimeout"
+  setTimeout(() => {
 
-    // optional reset
-   bgMusic.currentTime = 0;
-   bgMusic.play();
-   }, 4000);
+      // Optional reset
+      bgMusic.currentTime = 0;
+      bgMusic.play();
+  }, 4000);
 }
 
 function addScore(n) {
-    score += n;
-    scoreElement.textContent = score.toString().padStart(6, '0'); 
+  score += n;
+  scoreEl.textContent = String(score).padStart(6, '0');
 }
 
-//_Enemy update and draw functions____________________
+//__Enemy update and draw functions___
 function updateEnemies() {
   for (let e of enemies) {
-    if (e.dsquished) {
-      e.squishTimer--;
-      if (e.squishTimer <= 0) { e.dead = true; }
-      continue;
-    }
-    if (e.dead) continue;
+      if (e.squished) { // Corrigido de e.dsquished para e.squished
+          e.squishTimer--;
+          if(e.squishTimer <= 0) { e.dead = true; }
+          continue;
+      }
+      if (e.dead) continue;
 
-    e.x += e.vx;
+      e.x += e.vx;
 
-    // Ground check
-    const eTileLeft = Math.floor(e.x / TILE);
-    const eTileRight = Math.floor((e.x + e.w - 1) / TILE);
-    const aheadTile = e.vx > 0 ? eTileRight + 1 : eTileLeft - 1;
+      // Ground check
+      const eTileLeft = Math.floor(e.x / TILE);
+      const eTileRight = Math.floor((e.x + e.w - 1) / TILE);
+      const aheadTile = e.vx > 0 ? eTileRight + 1 : eTileLeft - 1;
 
-    if (isGap(aheadTile * TILE) || e.x + 0 < 0 || e.x + e.w > WORLD_W) {
-      e.vx *= -1;
-    }
+      if (isGap(aheadTile * TILE) || e.x < 0 || e.x + e.w > WORLD_W) {
+        e.vx = -e.vx;
+      }
+
+      // Reverse at pipes / platforms
+    for (let p of pipes) {
+      if (rectOverlap(e.x, e.y, e.w, e.h, p.x, p.y, p.w, p.h)) {
+          e.vx = -e.vx;
+          e.x += e.vx * 2;
+          break;
+      }
   }
-  }
+
+  // Keep on ground surface
+  e.y = GROUND_Y - e.h;
+
+  // Anim
+e.frameTimer++;
+if (e.frameTimer > 10) { e.frame = (e.frame + 1) % 2; e.frameTimer = 0; }
+}
+}
+
+// - Timer
+function startTimer() {
+    stopTimer();
+    timerInterval = setInterval(() => {
+        if (state !== 'playing') return;
+        timeLeft--;
+        timerEl.textContent = timeLeft;
+        if (timeLeft <= 0) killMario();
+    }, 1000);
+}
+
+function stopTimer() {
+    if (timerInterval) { clearInterval(timerInterval); timerInterval = null; }
+}
