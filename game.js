@@ -526,7 +526,7 @@ for (let e of enemies) {
   // Stomp from above
   if (mario.vy > 0 && mBottom - mario.vy <= eTop + 4) {
 
-    const stomp = new Audio("stomp.mp3");
+    const stomp = new Audio("stompSound.mp3");
 stomp.volume = 0.8;
 stomp.play();
 
@@ -620,25 +620,25 @@ function addScore(n) {
     scoreElement.textContent = score.toString().padStart(6, '0'); 
 }
 
-//_________________Enemy update and draw functions__________________________________________
+//_Enemy update and draw functions____________________
 function updateEnemies() {
   for (let e of enemies) {
-    if (e.dead) {
-      if (e.squished) {
-        e.squishTimer--;
-        if (e.squishTimer <= 0) { e.dead = true; }
-        continue;
-       }
-       if (e.dead) continue;
+    if (e.dsquished) {
+      e.squishTimer--;
+      if (e.squishTimer <= 0) { e.dead = true; }
+      continue;
+    }
+    if (e.dead) continue;
 
-    // Move enemy
     e.x += e.vx;
 
-// Ground check
-const eTileLeft = Math.floor(e.x / TILE);
-const eTileRight = Math.floor((e.x + e.w - 1) / TILE);
-const aheadTile = e.vx > 0 ? eTileRight + 1 : eTileLeft - 1;
+    // Grourd check
+    const eTileLeft = Math.floor(e.x / TILE);
+    const eTileRight = Math.floor((e.x + e.w - 1) / TILE);
+    const aheadTile = e.vx > 0 ? eTileRight + 1 : eTileLeft - 1;
 
-if (isGap(aheadTile * TILE) || e.x ,+0 || e.x + e.w > WORLD_W) {
-  e.vx = -e.vx; // reverse direction
-}
+    if (isGap(aheadTile * TILE) || e.x + 0 < 0 || e.x + e.w > WORLD_W) {
+      e.vx *= -1;
+    }
+  }
+  }
