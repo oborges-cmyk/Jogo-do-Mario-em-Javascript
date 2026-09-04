@@ -674,13 +674,27 @@ function stopTimer() {
 }
 
 // _________________________________ End game _______________________________
+// --- End game
 function endGame(result) {
-  state = result;
-  stopTimer();
-  if (result === 'win') {
-      bgMusic.pause();
-      const winSound = new Audio("win.mp3");
-  winSound.play();
-    addScore(timeLeft * 50);
-    showOverlay('You Win!', `Score: ${score}`, 'Play Again', () => {
-      
+    state = result;
+    stopTimer();
+    
+    if (result === 'win') {
+        bgMusic.pause();
+        const winSound = new Audio("win.mp3");
+        winSound.play();
+        
+        addScore(timeLeft * 50);
+        showOverlay('YOU WIN!', `Score: ${score}\nCoins: ${coinCount}`, 'PLAY AGAIN');
+    } else {
+        lives = 0;
+        showOverlay('GAME OVER', `Final Score: ${score}`, 'TRY AGAIN');
+    }
+}
+
+function showOverlay(title, msg, btn) {
+    overlayTitle.textContent = title;
+    overlayMsg.innerHTML = msg.replace(/\n/g, '<br>');
+    overlayBtn.textContent = btn;
+    overlay.classList.remove('hidden');
+}
