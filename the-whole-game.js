@@ -555,5 +555,13 @@ if (mario.walking && mario.onGround) {
   if (mario.frameTimer >    6) {
     mario.frame = (mario.frame +1 ) % 3;
     mario.frameTimer = 0;
-  } else if
+  } else if (!marii)
 }
+
+//camera
+
+
+//play coin sound
+
+
+//break brick
