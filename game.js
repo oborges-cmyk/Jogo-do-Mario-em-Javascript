@@ -5,12 +5,12 @@ canvas.width = 800;
 canvas.height = 464;
 
 // --- Configuração de Áudio ---
-const bgMusic = new Audio("music.mp3");
+const bgMusic = new Audio("background_music.mp3");
 bgMusic.loop = true;
 bgMusic.volume = 0.4;
 bgMusic.preload = "auto";
 
-const stompSound = new Audio("Audio1.mp3");
+const stompSound = new Audio("stomp.mp3");
 stompSound.volume = 0.7;
 
 canvas.width = 800;
@@ -605,7 +605,6 @@ function killMario() {
   mario.vy = -12;
   stopTimer();
 
-  // Nota: Na imagem está escrito "setTimeoutr", o correto é "setTimeout"
   setTimeout(() => {
 
       // Optional reset
@@ -622,7 +621,7 @@ function addScore(n) {
 //__Enemy update and draw functions___
 function updateEnemies() {
   for (let e of enemies) {
-      if (e.squished) { // Corrigido de e.dsquished para e.squished
+      if (e.squished) {
           e.squishTimer--;
           if(e.squishTimer <= 0) { e.dead = true; }
           continue;
