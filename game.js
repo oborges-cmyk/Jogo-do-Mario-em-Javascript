@@ -674,7 +674,6 @@ function stopTimer() {
 }
 
 // _________________________________ End game _______________________________
-// --- End game
 function endGame(result) {
     state = result;
     stopTimer();
