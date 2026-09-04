@@ -632,7 +632,7 @@ function updateEnemies() {
 
     e.x += e.vx;
 
-    // Grourd check
+    // Ground check
     const eTileLeft = Math.floor(e.x / TILE);
     const eTileRight = Math.floor((e.x + e.w - 1) / TILE);
     const aheadTile = e.vx > 0 ? eTileRight + 1 : eTileLeft - 1;
