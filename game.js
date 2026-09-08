@@ -682,5 +682,17 @@ function endGame(result) {
       const winSound = new Audio("win.mp3");
   winSound.play();
     addScore(timeLeft * 50);
-    showOverlay('You Win!', `Score: ${score}`, 'Play Again', () => {
-      
+    showOverlay('YOU WIN!', `Score: ${score}\nCoins: ${coinCount}\nTime Bonus: ${timeLeft * 50}`, 'Play Again');
+  } else { 
+    lives = 3;
+    showOverlay('GAME OVER', `Score: ${score}\nCoins: ${coinCount}`, 'Try Again');
+  }
+  }
+
+function showOverlay(title, msg, btnText) {
+  overlayTitle.textContent = title;
+  overlayMsg.innerHTML = msg.replace(/\n/g, '<br>');
+  overlayBtn.textContent = btn;
+  overlayBtn.classList.remove('hidden');
+  }
+
