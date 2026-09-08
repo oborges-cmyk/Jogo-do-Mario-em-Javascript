@@ -947,25 +947,26 @@ ctx.fillRect(ox,     oy - 18, 6, 3);
 ctx.fillStyle = C.mario.overalls;
 ctx.fillRect(ox - 10, oy - 18, 20, 14);
 
-// ... [linhas borradas acima, parecem desenhar botões]
-946     ctx.fillStyle = C.mario.skin;
-947     ctx.fillRect(ox - 6, oy - 22, 4, 4);
-948     ctx.fillRect(ox + 2, oy - 22, 4, 4);
-949 
-950     // Legs / feet
-951     const legOff = airborne ? [0, 0] : frame === 1 ? [-4, 4] : frame === 2 ? [4, -4] :;
-952     ctx.fillStyle = C.mario.overalls;
-953     ctx.fillRect(ox - 10, oy - 4 + legOff[0], 8, 8);
-954     ctx.fillRect(ox + 2, oy - 4 + legOff[1], 8, 8);
-955 
-956     // Shoes
-957     ctx.fillStyle = C.mario.shoes;
-958     ctx.fillRect(ox - 12, oy + 2 + legOff[0], 12, 6);
-959     ctx.fillRect(ox + 1, oy + 2 + legOff[1], 12, 6);
-960 
-961     // Arms
-962     ctx.fillStyle = C.mario.skin;
-963     const armY = airborne ? -22 : -16;
-964     ctx.fillRect(ox - 16, oy + armY, 6, 10);
-965     ctx.fillRect(ox + 10, oy + armY, 6, 10);
-966 }
+
+// Buttons
+ctx.fillStyle = C.mario.skin;
+ctx.fillRect(ox - 4, oy - 10, 4, 4);
+ctx.fillRect(ox + 2, oy - 10, 4, 4);
+
+// Legs / feet
+const legOff = airborne ? [0, 0] : frame === 1 ? [-4, 4] : frame === 2 ? [4, -4] :;
+ctx.fillStyle = C.mario.overalls;
+ctx.fillRect(ox - 10, oy - 4 + legOff[0], 8, 8);
+ctx.fillRect(ox + 2, oy - 4 + legOff[1], 8, 8);
+
+// Shoes
+ctx.fillStyle = C.mario.shoes;
+ctx.fillRect(ox - 12, oy + 2 + legOff[0], 12, 6);
+ctx.fillRect(ox + 1, oy + 2 + legOff[1], 12, 6);
+
+// Arms
+ctx.fillStyle = C.mario.skin;
+const armY = airborne ? -22 : -16;
+ctx.fillRect(ox - 16, oy + armY, 6, 10);
+ctx.fillRect(ox + 10, oy + armY, 6, 10);
+}
