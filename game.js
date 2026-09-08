@@ -674,7 +674,6 @@ function stopTimer() {
 
 // _________________________________ End game _______________________________
 function endGame(result) {
-function endGame(result) {
   state = result;
   stopTimer();
 
@@ -699,3 +698,105 @@ function showOverlay(title, msg, btn) {
   overlayBtn.classList.remove('hidden');
 }
 
+//______________________ Drawing ______________________________________
+function drawBackground(cx) {
+ctx.fillStyle = C.sky;
+ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+// Hills
+ctx.fillStyle = C.hill;
+for (let h of hillDefs) {
+  const hx = h.x * TILE - cx;
+  if (hx + h.r < 0 || hx - h.r > canvas.width) continue;
+  ctx.beginPath();
+  ctx.arc(hx, GROUND_Y, h.r, Math.PI, 0);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(hx - h.r * 0.6, GROUND_Y, h.r * 0.5, Math.PI, 0);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(hx + h.r * 0.7, GROUND_Y, h.r * 0.45, Math.PI, 0);
+  ctx.fill();
+ }
+
+// Clouds
+ctx.fillStyle = C.cloud;
+for (let cl of cloudDefs) {
+const cldx = cl.x * TILE - cx * 0.5; // parallax
+const cly = cl.y * TILE;
+if (cldx + 40 < 0 || cldx - 40 > canvas.width) continue;
+drawCloud(cldx, cldy);
+} 
+}
+
+function drawCloud(x, y) {
+ctx.beginPath();
+ctx.arc(x, y, 20, Math.PI,0);
+ctx.arc(x + 20, y - 12, 26, Math.PI,0);
+ctx.arc(x + 50, y, 20, Math.PI,0);
+ctx.closePath();
+ctx.fill();
+}
+
+function drawGround(cx) {
+  for (let tx = Math.floor(cx / TILE); tx < Math.floor((cx + canvas.width) / TILE) + 1; tx++) {
+    if (isGap(tx * TILE)) continue;
+    const sx = tx * TILE - cx;
+    // Top surface row
+    ctx.fillStyle = C.groundTop;
+    ctx.fillRect(sx, GROUND_Y, TILE, 6);
+    // Body
+    ctx.fillStyle = C.ground;
+    ctx.fillRect(sx, GROUND_Y + 6, TILE, TILE - 6);
+    // Grid lines
+    ctx.strokeStyle = '#a03808';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(sx, GROUND_Y, TILE, TILE);
+  }
+  }
+
+ function drawPlatform(p, cx) {
+    const sx = p.x - cx;
+    const sy = p.y + p.bounce;
+  
+    if (sx + p.w < 0 || sx > canvas.width) return;
+  
+    if (p.type === 'brick') {
+        ctx.fillStyle = p.hit ? '#888' : C.brick;
+        ctx.fillRect(sx, sy, p.w, p.h);
+        ctx.fillStyle = p.hit ? '#aaa' : C.brickTop;
+        ctx.fillRect(sx, sy, p.w, 4);
+        ctx.strokeStyle = '#7b2808';
+        ctx.lineWidth = 1;
+  
+        // Brick pattern
+        for (let i = 0; i < p.w / TILE; i++) {
+            ctx.strokeRect(sx + i * TILE, sy, TILE, TILE);
+            ctx.fillStyle = '#a03808';
+            ctx.fillRect(sx + i * TILE + TILE / 2, sy + TILE / 2, TILE / 2, 4);
+        }
+    } else if (p.type === 'question') {
+        if (p.hit) {
+            ctx.fillStyle = '#888';
+            ctx.fillRect(sx, sy, p.w, p.h);
+            ctx.fillStyle = '#aaa';
+            ctx.fillRect(sx, sy, p.w, 4);
+            ctx.strokeStyle = '#555';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(sx, sy, p.w, p.h);
+        } else {
+            ctx.fillStyle = C.question;
+            ctx.fillRect(sx, sy, p.w, p.h);
+            ctx.fillStyle = C.qShine;
+            ctx.fillRect(sx + 2, sy + 2, p.w - 4, 4);
+            ctx.strokeStyle = '#b06000';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(sx, sy, p.w, p.h);
+            // "?" symbol
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 18px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('?', sx + p.w / 2, sy + p.h - 7);
+        }
+      }
+    }
