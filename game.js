@@ -800,3 +800,29 @@ function drawGround(cx) {
         }
       }
     }
+
+//duas linhas de algo
+
+    function drawPipe(p, cx) {
+      const sx = p.x - cx;
+      if (sx + p.w < 0 || sx > canvas.width) return;
+    
+      // Body
+      ctx.fillStyle = C.pipe.body;
+      ctx.fillRect(sx + 4, p.y + TILE, p.w - 8, p.h - TILE);
+      
+      // Dark edge
+      ctx.fillStyle = C.pipe.dark;
+      ctx.fillRect(sx + 4, p.y + TILE, 6, p.h - TILE);
+      
+      // Rim
+      ctx.fillStyle = C.pipe.rim;
+      ctx.fillRect(sx, p.y, p.w, TILE);
+      ctx.fillStyle = C.pipe.body;
+      ctx.fillRect(sx + 2, p.y + 2, p.w - 4, TILE - 4);
+      
+      // Shine
+      ctx.fillStyle = C.pipe.rim;
+      ctx.fillRect(sx + 6, p.y + 6, 6, TILE - 8);
+    }
+    
