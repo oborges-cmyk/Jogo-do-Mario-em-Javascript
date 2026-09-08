@@ -801,8 +801,6 @@ function drawGround(cx) {
       }
     }
 
-//duas linhas de algo
-
     function drawPipe(p, cx) {
       const sx = p.x - cx;
       if (sx + p.w < 0 || sx > canvas.width) return;
@@ -825,4 +823,79 @@ function drawGround(cx) {
       ctx.fillStyle = C.pipe.rim;
       ctx.fillRect(sx + 6, p.y + 6, 6, TILE - 8);
     }
+
+    function drawCoin(c, cx) {
+      if (c.collected) return;
+      const sx = c.x - cx;
+      if (sx < -20 || sx > canvas.width + 20) return;
+      c.anim = (c.anim + 0.05) % (Math.PI * 2);
+      const scaleX = Math.abs(Math.cos(c.anim));
+      ctx.save();
+      ctx.translate(sx, c.y);
+      ctx.scale(scaleX, 1);
+      ctx.fillStyle = C.coin;
+      ctx.beginPath();
+      ctx.arc(0, 0, c.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = C.coinRim;
+      ctx.beginPath();
+      ctx.arc(0, 0, c.r - 3, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = C.coin;
+      ctx.font = 'bold 9px monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('$', 0, 3);
+      ctx.restore();
+    }
+
+    function drawGoomba(e, cx) {
+      if (e.dead && !e.squished) return;
+      const sx = e.x - cx;
+      if (sx + e.w < -20 || sx > canvas.width + 20) return;
     
+      ctx.save();
+      ctx.translate(sx + e.w / 2, e.y + e.h);
+    
+      if (e.squished) {
+          // Flat squished goomba
+          ctx.fillStyle = C.goomba.body;
+          ctx.fillRect(-e.w / 2, -6, e.w, 6);
+          ctx.restore();
+          return;
+      }
+    
+      const walk = e.frame === 0 ? 2 : -2;
+    
+      // Body
+      ctx.fillStyle = C.goomba.body;
+      ctx.beginPath();
+      ctx.arc(0, -e.h * 0.55, e.w * 0.45, Math.PI, 0);
+      ctx.fillRect(-e.w / 2, -e.h * 0.55, e.w, e.h * 0.55);
+      ctx.fill();
+    
+      // Feet
+      ctx.fillStyle = C.goomba.dark;
+      ctx.fillRect(-e.w / 2 + walk, -8, 10, 8);
+      ctx.fillRect(e.w / 2 - 10 - walk, -8, 10, 8);
+    
+      // Eyes
+      ctx.fillStyle = C.goomba.eye;
+      ctx.fillRect(-10, -e.h * 0.7, 9, 8);
+      ctx.fillRect(1, -e.h * 0.7, 9, 8);
+      ctx.fillStyle = C.goomba.pupil;
+      ctx.fillRect(-8, -e.h * 0.65, 5, 5);
+      ctx.fillRect(3, -e.h * 0.65, 5, 5);
+      // Angry brows
+      ctx.strokeStyle = C.goomba.dark;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(-12, -e.h * 0.75);
+      ctx.lineTo(-1, -e.h * 0.68);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(1, -e.h * 0.68);
+      ctx.lineTo(12, -e.h * 0.75);
+      ctx.stroke();
+    
+      ctx.restore();
+    }
