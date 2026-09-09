@@ -954,7 +954,7 @@ ctx.fillRect(ox - 4, oy - 10, 4, 4);
 ctx.fillRect(ox + 2, oy - 10, 4, 4);
 
 // Legs / feet
-const legOff = airborne ? [0, 0] : frame === 1 ? [-4, 4] : frame === 2 ? [4, -4] :;
+const legOff = airborne ? [0, 0] : frame === 1 ? [-4, 4] : frame === 2 ? [4, -4] : [0, 0];
 ctx.fillStyle = C.mario.overalls;
 ctx.fillRect(ox - 10, oy - 4 + legOff[0], 8, 8);
 ctx.fillRect(ox + 2, oy - 4 + legOff[1], 8, 8);
@@ -1048,3 +1048,4 @@ function loop(ts) {
      // —- Kick off
      initGame();
      requestAnimationFrame(loop);
+     }
