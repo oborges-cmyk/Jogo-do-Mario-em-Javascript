@@ -970,3 +970,81 @@ const armY = airborne ? -22 : -16;
 ctx.fillRect(ox - 16, oy + armY, 6, 10);
 ctx.fillRect(ox + 10, oy + armY, 6, 10);
 }
+
+function drawFlag(cx) {
+const sx = FLAG_X * TILE - cx;
+if (sx < -TILE || sx > canvas.width + TILE) return;
+
+const poleH = 10 * TILE;
+const poleX = sx + TILE;
+
+// Pole
+ctx.fillStyle = C.flag.pole;
+ctx.fillRect(poleX, GROUND_Y - poleH, 6, poleH);
+
+// FLag
+ctx.fillStyle = C.flag.flag;
+ctx.beginPath();
+ctx.moveTo(poleX + 6, GROUND_Y - poleH);
+ctx.lineTo(poleX + 6 + 40, GROUND_Y - poleH + 20);
+ctx.lineTo(poleX + 6, GROUND_Y - poleH + 40);
+ctx.closePath();
+ctx.fill();
+
+// Ball on top
+ctx.fillStyle = C.flag.pole;
+ctx.beginPath();
+
+ctx.arc(poleX + 3, GROUND_Y - poleH, 6, 0, Math.PI * 2);
+ctx.fill();
+}
+
+// -- Main Loop
+let lastTime = 0;
+function loop(ts) {
+    const dt = ts - lastTime;
+    lastTime = ts;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    drawBackground(camX);
+    drawGround(camX);
+    for (let p of pipes)       drawPipe(p, camX);
+    for (let p of platforms)   drawPlatform(p, camX);
+    for (let c of coins)       drawCoin(c, camX);
+    for (let e of enemies)     drawGoomba(e, camX);
+    drawFlag(camX);
+    drawMario(camX);
+    drawParticles(camX);
+
+    drawBackground(camX);
+    drawGround(camX);
+    for (let p of pipes)       drawPipe(p, camX);
+    for (let p of platforms)   drawPlatform(p, camX);
+    for (let c of coins)       drawCoin(c, camX);
+    for (let e of enemies)     drawGoomba(e, camX);
+    drawFlag(camX);
+    drawMario(camX);
+    drawParticles(camX);
+    
+    if (state === 'playing') {
+        updateMario();
+        updateEnemies();
+        updateParticles();
+    }
+      // —- Overlay button
+      overlayBtn.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+      
+          // Start background music
+          bgMusic.play();
+      
+          lives = 3;
+          initGame();
+          state = 'playing';
+        startTimer();
+      });
+     
+     // —- Kick off
+     initGame();
+     requestAnimationFrame(loop);
