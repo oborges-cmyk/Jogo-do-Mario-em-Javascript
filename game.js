@@ -9,7 +9,7 @@ bgMusic.loop = true;
 bgMusic.volume = 0.4;
 bgMusic.preload = "auto";
 
-const stompSound = new Audio("Stomp.mp3");
+const stompSound = new Audio("stomp.mp3");
 
 stompSound.volume = 0.7;
 
@@ -533,8 +533,8 @@ function updateMario() {
     if (mario.vy > 0 && mBottom - mario.vy <= eTop + 4) {
 
       const stomp = new Audio("stomp.mp3");
-stomp.volume = 0.8;
-stomp.play();
+      stomp.volume = 0.8;
+      stomp.play();
 
       e.dead = true;
       e.squished = true;
